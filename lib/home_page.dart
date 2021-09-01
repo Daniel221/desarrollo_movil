@@ -25,15 +25,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showInfoDialog(BuildContext context) {
+    String imcTable = "";
+    if (female) {
+      imcTable =
+          "Edad   IMC ideal\n16-17   20-25\n18-18   20-25\n19-24   20-25\n25-34   21-26\n35-44   22-27\n45-54   23-28\n55-64  24-29\n65-90   26-31";
+    } else {
+      imcTable =
+          "Edad   IMC ideal\n16-17   19-24\n18-18   19-24\n19-24   19-24\n25-34   21-25\n35-44   22-26\n45-54   23-27\n55-64  24-28\n65-90   26-30";
+    }
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text("Tu IMC: ${imc.toStringAsFixed(2)}"),
             content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Tabla del imc:"),
+                Text("Tabla del imc para ${female ? 'Mujeres' : 'Hombres'}:\n"),
+                Text(imcTable),
               ],
             ),
             actions: [
@@ -51,9 +61,25 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Calcular IMC'),
-        ),
+        appBar: AppBar(title: Text('Calcular IMC'), actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 30),
+            child: GestureDetector(
+              onTap: () {
+                weightController.text = "";
+                heightController.text = "";
+                female = false;
+                male = false;
+                FocusScope.of(context).unfocus();
+                setState(() {});
+              },
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ]),
         body: ListView(
           children: [
             Align(
