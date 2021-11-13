@@ -1,4 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:push_notifs_o2021/home/home_page.dart';
 
@@ -9,40 +11,63 @@ void main() async {
   runApp(MyApp());
 }
 
-Future initLocalNotifications() async {
-  // TODO: inicializar los canales
-  await AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: channelSimpleId,
-        channelName: channelSimpleName,
-        channelDescription: channelSimpleDescr,
-        defaultColor: Colors.purple,
-        ledColor: Colors.blue,
-        importance: NotificationImportance.Default,
-      ),
-      NotificationChannel(
-        channelKey: channelBigPictureId,
-        channelName: channelBigPictureName,
-        channelDescription: channelBigPictureDescr,
-        defaultColor: Colors.purple,
-        ledColor: Colors.yellow,
-        importance: NotificationImportance.High,
-      ),
-      NotificationChannel(
-        channelKey: channelScheduleId,
-        channelName: channelScheduleName,
-        channelDescription: channelScheduleDescr,
-        defaultColor: Colors.purple,
-        ledColor: Colors.red,
-        importance: NotificationImportance.Default,
-      ),
-    ],
-  );
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyBX2c3eeYqPfuY1TLi5mdswsOhyapqGMv0',
+    appId: '1:1092699778286:android:5c4da6eb127224603f17ff',
+    messagingSenderId: '1092699778286',
+    projectId: 'push-notif-fafeb',
+  ));
+  print('Handling a background message ${message.messageId}');
 }
 
-class MyApp extends StatelessWidget {
+Future initLocalNotifications() async {
+  AwesomeNotifications().initialize(
+      // set the icon to null if you want to use the default app icon
+      null,
+      [
+        NotificationChannel(
+          channelKey: channelSimpleId,
+          channelName: channelSimpleName,
+          channelDescription: channelSimpleDescr,
+          defaultColor: Colors.purple,
+          ledColor: Colors.blue,
+          importance: NotificationImportance.Default,
+        ),
+        NotificationChannel(
+          channelKey: channelBigPictureId,
+          channelName: channelBigPictureName,
+          channelDescription: channelBigPictureDescr,
+          defaultColor: Colors.purple,
+          ledColor: Colors.yellow,
+          importance: NotificationImportance.High,
+        ),
+        NotificationChannel(
+          channelKey: channelScheduleId,
+          channelName: channelScheduleName,
+          channelDescription: channelScheduleDescr,
+          defaultColor: Colors.purple,
+          ledColor: Colors.red,
+          importance: NotificationImportance.Default,
+        ),
+      ]);
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.onMessage.listen((event) {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
